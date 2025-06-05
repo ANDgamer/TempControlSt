@@ -1,289 +1,367 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <title>ESP8266 Firebase Dashboard</title>
     <style>
-        /* ВАШІ СТИЛІ ЗАЛИШАЮТЬСЯ ТУТ БЕЗ ЗМІН. */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            color: #e0e6f0;
-        }
+      /* ВАШІ СТИЛІ */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: #e0e6f0;
+      }
 
-        html,
-        body {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-        }
+      html,
+      body {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: radial-gradient(circle at top left, #1a1f36, #0d101b);
-            color: white;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(7, 1fr);
-            grid-gap: 16px;
-            padding: 16px;
-            box-sizing: border-box;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background: radial-gradient(circle at top left, #1a1f36, #0d101b);
+        color: white;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(7, 1fr);
+        grid-gap: 16px;
+        padding: 16px;
+        box-sizing: border-box;
+      }
 
-        #C1 {
-            grid-area: 1 / 1 / 2 / 2;
-        }
+      #C1 {
+        grid-area: 1 / 1 / 2 / 2;
+      }
 
-        #C2 {
-            grid-area: 1 / 2 / 2 / 3;
-        }
+      #C2 {
+        grid-area: 1 / 2 / 2 / 3;
+      }
 
-        #C3 {
-            grid-area: 1 / 3 / 2 / 4;
-        }
+      #C3 {
+        grid-area: 1 / 3 / 2 / 4;
+      }
 
-        #C4 {
-            grid-area: 2 / 1 / 5 / 4;
-        }
+      #C4 {
+        grid-area: 2 / 1 / 5 / 4;
+      }
 
-        #C5 {
-            grid-area: 5 / 1 / 8 / 4;
-        }
+      #C5 {
+        grid-area: 5 / 1 / 8 / 4;
+      }
 
-        #C1,
-        #C2,
-        #C3,
-        #C4,
-        #C5 {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 16px;
-            transition: transform 0.3s ease;
-        }
+      #C1,
+      #C2,
+      #C3,
+      #C4,
+      #C5 {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 16px;
+        transition: transform 0.3s ease;
+      }
 
-        #C1,
-        #C2,
-        #C3,
-        #autoMode {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
+      #C1,
+      #C2,
+      #C3,
+      #autoMode {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
 
-        h3 {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+      h3 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-        span,
-        strong {
-            color: #6ac6ff;
-            font-size: 1.1em;
-            font-weight: bold;
-        }
+      span,
+      strong {
+        color: #6ac6ff;
+        font-size: 1.1em;
+        font-weight: bold;
+      }
 
-        .button {
-            background: linear-gradient(135deg, #1f4eff, #17c0eb);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 8px 16px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s ease;
-        }
+      .button {
+        background: linear-gradient(135deg, #1f4eff, #17c0eb);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 8px 16px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.2s ease;
+      }
 
-        .button:hover {
-            background: linear-gradient(135deg, #17c0eb, #1f4eff);
-            transform: scale(1.05);
-        }
+      .button:hover {
+        background: linear-gradient(135deg, #17c0eb, #1f4eff);
+        transform: scale(1.05);
+      }
 
-        .doubleContainer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
+      .doubleContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
 
-        #postform,
-        #autoMode,
-        #mySlider {
-            width: 100%;
-            flex-wrap: nowrap;
-        }
+      #postform,
+      #autoMode,
+      #mySlider {
+        width: 100%;
+        flex-wrap: nowrap;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="C1">
-        <h3>Temperature: <strong id="temperatureValue">... °C</strong></h3>
-        <h3>Pressure: <strong id="pressureValue">... hPa</strong></h3>
+      <h3>Temperature: <strong id="temperatureValue">... °C</strong></h3>
+      <h3>Pressure: <strong id="pressureValue">... hPa</strong></h3>
     </div>
     <div id="C2">
-        <div class="doubleContainer">
-            <h3>AutoMode: <span id="autoModeButtonDemo">...</span></h3>
-            <input type="button" class="button" id="autoModeButton" value="..." onclick="autoModeButtonFunction()" />
-        </div>
-        <h3 id="heaterState2" style="display: none">HeaterState: <span id="heaterButtonDemo2">...</span></h3>
+      <div class="doubleContainer">
+        <h3>AutoMode: <span id="autoModeButtonDemo">...</span></h3>
+        <input
+          type="button"
+          class="button"
+          id="autoModeButton"
+          value="..."
+          onclick="autoModeButtonFunction()"
+        />
+      </div>
+      <h3 id="heaterState2" style="display: none">
+        HeaterState: <span id="heaterButtonDemo2">...</span>
+      </h3>
     </div>
     <div id="C3">
-        <div id="autoMode">
-            <div class="doubleContainer" id="postform">
-                <input type="range" class="slider" id="mySlider" min="0" max="50"
-                    oninput="updateNewTargetValue(this.value)" onchange="submitTargetValue(this.value)" />
-            </div>
-            <h3>NewTargetValue: <span id="newTargetValue">...</span></h3>
-            <h3>CurrentTargetValue: <span id="currentTargetValue">...</span></h3>
+      <div id="autoMode">
+        <div class="doubleContainer" id="postform">
+          <input
+            type="range"
+            class="slider"
+            id="mySlider"
+            min="0"
+            max="50"
+            oninput="updateNewTargetValue(this.value)"
+            onchange="submitTargetValue(this.value)"
+          />
         </div>
-        <div class="doubleContainer" id="manualMode" style="display: none">
-            <h3>HeaterState: <span id="heaterButtonDemo">...</span></h3>
-            <input type="button" class="button" id="heaterButton" value="..." onclick="heaterButtonFunction()" />
-        </div>
+        <h3>NewTargetValue: <span id="newTargetValue">...</span></h3>
+        <h3>CurrentTargetValue: <span id="currentTargetValue">...</span></h3>
+      </div>
+      <div class="doubleContainer" id="manualMode" style="display: none">
+        <h3>HeaterState: <span id="heaterButtonDemo">...</span></h3>
+        <input
+          type="button"
+          class="button"
+          id="heaterButton"
+          value="..."
+          onclick="heaterButtonFunction()"
+        />
+      </div>
     </div>
     <div id="C4"><canvas id="tempChart"></canvas></div>
     <div id="C5"><canvas id="pressureChart"></canvas></div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyD_Uyasq_6UAtW-oQE_K1xzKjl3U9Sgnbc",
-            authDomain: "tempcontrolst.firebaseapp.com",
-            databaseURL: "https://tempcontrolst-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "tempcontrolst",
-            storageBucket: "tempcontrolst.appspot.com",
-            messagingSenderId: "1096581937068",
-            appId: "1:1096581937068:web:40cd8dd3ddbf778cb12c09",
-        };
+      const firebaseConfig = {
+        apiKey: "AIzaSyD_Uyasq_6UAtW-oQE_K1xzKjl3U9Sgnbc",
+        authDomain: "tempcontrolst.firebaseapp.com",
+        databaseURL:
+          "https://tempcontrolst-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "tempcontrolst",
+        storageBucket: "tempcontrolst.appspot.com",
+        messagingSenderId: "1096581937068",
+        appId: "1:1096581937068:web:40cd8dd3ddbf778cb12c09",
+      };
 
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const currentDataRef = database.ref('/currentData');
-        const controlsRef = database.ref('/controls');
-        const historyRef = database.ref('/history');
+      firebase.initializeApp(firebaseConfig);
+      const database = firebase.database();
+      const currentDataRef = database.ref("/currentData");
+      const controlsRef = database.ref("/controls");
+      const historyRef = database.ref("/history");
 
-        let tempChart, pressureChart;
-        const maxDataPoints = 60;
+      let tempChart, pressureChart;
+      const maxDataPoints = 60;
 
-        function updateNewTargetValue(value) { document.getElementById('newTargetValue').textContent = value; }
-        function submitTargetValue(value) { controlsRef.update({ targetValue: value }); }
-        function autoModeButtonFunction() {
-            const currentMode = document.getElementById("autoModeButtonDemo").textContent;
-            controlsRef.update({ autoMode: (currentMode === "ON" ? "OFF" : "ON") });
+      function updateNewTargetValue(value) {
+        document.getElementById("newTargetValue").textContent = value;
+      }
+      function submitTargetValue(value) {
+        controlsRef.update({ targetValue: value });
+      }
+      function autoModeButtonFunction() {
+        const currentMode =
+          document.getElementById("autoModeButtonDemo").textContent;
+        controlsRef.update({ autoMode: currentMode === "ON" ? "OFF" : "ON" });
+      }
+      function heaterButtonFunction() {
+        const isAutoMode =
+          document.getElementById("autoModeButtonDemo").textContent === "ON";
+        if (!isAutoMode) {
+          const currentState =
+            document.getElementById("heaterButtonDemo").textContent;
+          controlsRef.update({
+            heaterState: currentState === "ON" ? "OFF" : "ON",
+          });
         }
-        function heaterButtonFunction() {
-            const isAutoMode = document.getElementById("autoModeButtonDemo").textContent === "ON";
-            if (!isAutoMode) {
-                const currentState = document.getElementById("heaterButtonDemo").textContent;
-                controlsRef.update({ heaterState: (currentState === "ON" ? "OFF" : "ON") });
+      }
+
+      function initChart(chartId, label, color) {
+        const ctx = document.getElementById(chartId).getContext("2d");
+        return new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: label,
+                data: [],
+                borderColor: color,
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                tension: 0.1,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            scales: {
+              y: { beginAtZero: false, ticks: { color: "#e0e6f0" } },
+              x: { ticks: { color: "#e0e6f0" } },
+            },
+            plugins: {
+              legend: { labels: { color: "#e0e6f0" } },
+              annotation: { annotations: { targetLine: { display: false } } },
+            },
+          },
+        });
+      }
+
+      function addDataToChart(chart, label, data) {
+        if (!chart) return; // Захист, якщо графік ще не створено
+        chart.data.labels.push(label);
+        chart.data.datasets[0].data.push(data);
+        if (chart.data.labels.length > maxDataPoints) {
+          chart.data.labels.shift();
+          chart.data.datasets[0].data.shift();
+        }
+        chart.update();
+      }
+
+      currentDataRef.on("value", (snapshot) => {
+        const data = snapshot.val();
+        if (data && typeof data.temperature !== "undefined") {
+          document.getElementById(
+            "temperatureValue"
+          ).textContent = `${data.temperature.toFixed(2)} °C`;
+          document.getElementById(
+            "pressureValue"
+          ).textContent = `${data.pressure.toFixed(2)} hPa`;
+        }
+      });
+
+      controlsRef.on("value", (snapshot) => {
+        const controls = snapshot.val() || {};
+        const autoMode = controls.autoMode || "OFF";
+        const heaterState = controls.heaterState || "OFF";
+        const targetValue = parseFloat(controls.targetValue || "25");
+
+        document.getElementById("autoModeButtonDemo").textContent = autoMode;
+        document.getElementById("autoModeButton").value =
+          autoMode === "ON" ? "Turn OFF" : "Turn ON";
+        document.getElementById("heaterButtonDemo").textContent = heaterState;
+        document.getElementById("heaterButtonDemo2").textContent = heaterState;
+        document.getElementById("heaterButton").value =
+          heaterState === "ON" ? "Turn OFF" : "Turn ON";
+        document.getElementById("currentTargetValue").textContent = targetValue;
+        document.getElementById("newTargetValue").textContent = targetValue;
+        document.getElementById("mySlider").value = targetValue;
+
+        const autoModeBlock = document.getElementById("autoMode");
+        const manualModeBlock = document.getElementById("manualMode");
+        const heaterState2block = document.getElementById("heaterState2");
+
+        if (autoMode === "ON") {
+          manualModeBlock.style.display = "none";
+          autoModeBlock.style.display = "flex";
+          heaterState2block.style.display = "flex";
+          if (tempChart) {
+            tempChart.options.plugins.annotation.annotations.targetLine = {
+              type: "line",
+              yMin: targetValue,
+              yMax: targetValue,
+              borderColor: "red",
+              borderWidth: 2,
+              display: true,
+              label: { content: "Target", enabled: true, position: "start" },
+            };
+            tempChart.update();
+          }
+        } else {
+          manualModeBlock.style.display = "flex";
+          autoModeBlock.style.display = "none";
+          heaterState2block.style.display = "none";
+          if (
+            tempChart &&
+            tempChart.options.plugins.annotation.annotations.targetLine
+          ) {
+            tempChart.options.plugins.annotation.annotations.targetLine.display = false;
+            tempChart.update();
+          }
+        }
+      });
+
+      window.onload = function () {
+        console.log("Window loaded. Initializing charts...");
+        tempChart = initChart("tempChart", "Temperature (°C)", "#1f4eff");
+        pressureChart = initChart("pressureChart", "Pressure (hPa)", "#17c0eb");
+
+        console.log("Fetching initial history...");
+        historyRef.limitToLast(maxDataPoints).once("value", (snapshot) => {
+          console.log("Initial history received:", snapshot.val());
+          snapshot.forEach((childSnapshot) => {
+            const data = childSnapshot.val();
+            if (data && data.timestamp) {
+              const time = new Date(data.timestamp).toLocaleTimeString();
+              addDataToChart(tempChart, time, data.temperature);
+              addDataToChart(pressureChart, time, data.pressure);
             }
-        }
+          });
 
-        function initChart(chartId, label, color) {
-            const ctx = document.getElementById(chartId).getContext("2d");
-            return new Chart(ctx, {
-                type: "line", data: { labels: [], datasets: [{ label: label, data: [], borderColor: color, backgroundColor: "rgba(75, 192, 192, 0.2)", tension: 0.1, fill: true }] },
-                options: { responsive: true, maintainAspectRatio: false, animation: false, scales: { y: { beginAtZero: false, ticks: { color: '#e0e6f0' } }, x: { ticks: { color: '#e0e6f0' } } }, plugins: { legend: { labels: { color: '#e0e6f0' } }, annotation: { annotations: { targetLine: { display: false } } } } }
-            });
-        }
-
-        function addDataToChart(chart, label, data) {
-            chart.data.labels.push(label);
-            chart.data.datasets[0].data.push(data);
-            if (chart.data.labels.length > maxDataPoints) {
-                chart.data.labels.shift();
-                chart.data.datasets[0].data.shift();
-            }
-            chart.update();
-        }
-
-        currentDataRef.on('value', (snapshot) => {
+          console.log("Setting up listener for new data...");
+          historyRef.limitToLast(1).on("child_added", (snapshot) => {
             const data = snapshot.val();
-            if (data) {
-                document.getElementById('temperatureValue').textContent = `${data.temperature.toFixed(2)} °C`;
-                document.getElementById('pressureValue').textContent = `${data.pressure.toFixed(2)} hPa`;
+            console.log("New child added:", data);
+            if (data && data.timestamp) {
+              const lastLabel =
+                tempChart.data.labels[tempChart.data.labels.length - 1];
+              const newTime = new Date(data.timestamp).toLocaleTimeString();
+              if (lastLabel !== newTime) {
+                addDataToChart(tempChart, newTime, data.temperature);
+                // ================== ОСЬ ВИПРАВЛЕННЯ ==================
+                addDataToChart(pressureChart, newTime, data.pressure);
+                // ======================================================
+              }
             }
+          });
         });
-
-        controlsRef.on('value', (snapshot) => {
-            const controls = snapshot.val() || {};
-            const autoMode = controls.autoMode || "OFF";
-            const heaterState = controls.heaterState || "OFF";
-            const targetValue = parseFloat(controls.targetValue || "25");
-
-            document.getElementById("autoModeButtonDemo").textContent = autoMode;
-            document.getElementById("autoModeButton").value = (autoMode === "ON") ? "Turn OFF" : "Turn ON";
-            document.getElementById("heaterButtonDemo").textContent = heaterState;
-            document.getElementById("heaterButtonDemo2").textContent = heaterState;
-            document.getElementById("heaterButton").value = (heaterState === "ON") ? "Turn OFF" : "Turn ON";
-            document.getElementById("currentTargetValue").textContent = targetValue;
-            document.getElementById("newTargetValue").textContent = targetValue;
-            document.getElementById("mySlider").value = targetValue;
-
-            const autoModeBlock = document.getElementById("autoMode");
-            const manualModeBlock = document.getElementById("manualMode");
-            const heaterState2block = document.getElementById("heaterState2");
-
-            if (autoMode === "ON") {
-                manualModeBlock.style.display = "none";
-                autoModeBlock.style.display = "flex";
-                heaterState2block.style.display = "flex";
-                if (tempChart) {
-                    tempChart.options.plugins.annotation.annotations.targetLine = { type: 'line', yMin: targetValue, yMax: targetValue, borderColor: 'red', borderWidth: 2, display: true, label: { content: 'Target', enabled: true, position: 'start' } };
-                    tempChart.update();
-                }
-            } else {
-                manualModeBlock.style.display = "flex";
-                autoModeBlock.style.display = "none";
-                heaterState2block.style.display = "none";
-                if (tempChart && tempChart.options.plugins.annotation.annotations.targetLine) {
-                    tempChart.options.plugins.annotation.annotations.targetLine.display = false;
-                    tempChart.update();
-                }
-            }
-        });
-
-        window.onload = function () {
-            tempChart = initChart("tempChart", "Temperature (°C)", "#1f4eff");
-            pressureChart = initChart("pressureChart", "Pressure (hPa)", "#17c0eb");
-
-            historyRef.limitToLast(maxDataPoints).once('value', (snapshot) => {
-                snapshot.forEach((childSnapshot) => {
-                    const data = childSnapshot.val();
-                    if (data && data.timestamp) {
-                        const time = new Date(data.timestamp).toLocaleTimeString();
-                        addDataToChart(tempChart, time, data.temperature);
-                        addDataToChart(pressureChart, time, data.pressure);
-                    }
-                });
-
-                historyRef.limitToLast(1).on('child_added', (snapshot) => {
-                    const data = snapshot.val();
-                    if (data && data.timestamp) {
-                        const lastLabel = tempChart.data.labels[tempChart.data.labels.length - 1];
-                        const newTime = new Date(data.timestamp).toLocaleTimeString();
-                        if (lastLabel !== newTime) {
-                            addDataToChart(tempChart, newTime, data.temperature);
-                            addDataToChart(pressureChart, time, data.pressure);
-                        }
-                    }
-                });
-            });
-        };
+      };
     </script>
-</body>
-
+  </body>
 </html>
