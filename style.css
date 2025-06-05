@@ -1,0 +1,147 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #e0e6f0;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at top left, #1a1f36, #0d101b);
+  color: white;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  grid-gap: 16px;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+#C1 {
+  grid-area: 1 / 1 / 2 / 2;
+}
+
+#C2 {
+  grid-area: 1 / 2 / 2 / 3;
+}
+
+#C3 {
+  grid-area: 1 / 3 / 2 / 4;
+}
+
+#C4 {
+  grid-area: 2 / 1 / 5 / 4;
+}
+
+#C5 {
+  grid-area: 5 / 1 / 8 / 4;
+}
+
+#C1,
+#C2,
+#C3,
+#C4,
+#C5 {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px;
+  transition: transform 0.3s ease;
+}
+
+#C1:hover,
+#C2:hover,
+#C3:hover,
+#C4:hover,
+#C5:hover {
+  transform: scale(1.01);
+}
+
+#C1,
+#C2,
+#C3,
+#autoMode {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#C1,
+#C2,
+#C3 {
+  font-size: 1.2em;
+}
+
+@media screen and (max-width: 880px) {
+  #C1,
+  #C2,
+  #C3 {
+    font-size: 1em;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  #C1,
+  #C2,
+  #C3 {
+    font-size: 2vw;
+  }
+}
+
+h3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+span,
+strong {
+  color: #6ac6ff;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.button {
+  background: linear-gradient(135deg, #1f4eff, #17c0eb);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s ease;
+}
+
+.button:hover {
+  background: linear-gradient(135deg, #17c0eb, #1f4eff);
+  transform: scale(1.05);
+}
+
+.button:active {
+  transform: scale(0.97);
+}
+
+.doubleContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+#postform,
+#autoMode,
+#mySlider {
+  width: 100%;
+  flex-wrap: nowrap;
+}
