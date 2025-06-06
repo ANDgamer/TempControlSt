@@ -57,14 +57,6 @@ body {
   transition: transform 0.3s ease;
 }
 
-#C1:hover,
-#C2:hover,
-#C3:hover,
-#C4:hover,
-#C5:hover {
-  transform: scale(1.01);
-}
-
 #C1,
 #C2,
 #C3,
@@ -74,28 +66,6 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-}
-
-#C1,
-#C2,
-#C3 {
-  font-size: 1.2em;
-}
-
-@media screen and (max-width: 880px) {
-  #C1,
-  #C2,
-  #C3 {
-    font-size: 1em;
-  }
-}
-
-@media screen and (max-width: 750px) {
-  #C1,
-  #C2,
-  #C3 {
-    font-size: 2vw;
-  }
 }
 
 h3 {
@@ -125,10 +95,6 @@ strong {
 .button:hover {
   background: linear-gradient(135deg, #17c0eb, #1f4eff);
   transform: scale(1.05);
-}
-
-.button:active {
-  transform: scale(0.97);
 }
 
 .doubleContainer {

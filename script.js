@@ -1,131 +1,57 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyD_Uyasq_6UAtW-oQE_K1xzKjl3U9Sgnbc",
+  authDomain: "tempcontrolst.firebaseapp.com",
+  databaseURL:
+    "https://tempcontrolst-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "tempcontrolst",
+  storageBucket: "tempcontrolst.appspot.com",
+  messagingSenderId: "1096581937068",
+  appId: "1:1096581937068:web:40cd8dd3ddbf778cb12c09",
+};
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+const currentDataRef = database.ref("/currentData");
+const controlsRef = database.ref("/controls");
+const historyRef = database.ref("/history");
+
 let tempChart, pressureChart;
-const maxDataPoints = 61;
-const temperatureValues = [],
-  pressureValues = [];
+const maxDataPoints = 60;
 
 function updateNewTargetValue(value) {
   document.getElementById("newTargetValue").textContent = value;
 }
-
-//Оновлення значень
-function checkForValueUpdate() {
-  fetch("/gettemp")
-    .then((res) => res.text())
-    .then((temp) => {
-      document.getElementById("temperatureValue").textContent = temp + " °C";
-    });
-  fetch("/getpress")
-    .then((res) => res.text())
-    .then((press) => {
-      document.getElementById("pressureValue").textContent = press + " hPa";
-    });
-  fetch("/gettargetvalue")
-    .then((res) => res.text())
-    .then((val) => {
-      const targetVal = parseFloat(val.trim());
-      document.getElementById("currentTargetValue").textContent = targetVal;
-
-      fetch("/getautomode")
-        .then((res) => res.text())
-        .then((state) => {
-          const mode = state.trim();
-          document.getElementById("autoModeButtonDemo").textContent = mode;
-          document.getElementById("autoModeButton").value =
-            mode === "ON" ? "Turn OFF" : "Turn ON";
-
-          const autoModeBlock = document.getElementById("autoMode");
-          const manualModeBlock = document.getElementById("manualMode");
-          const heaterState2block = document.getElementById("heaterState2");
-
-          if (mode === "ON") {
-            if (manualModeBlock) manualModeBlock.style.display = "none";
-            if (autoModeBlock) autoModeBlock.style.display = "flex";
-            if (heaterState2block) heaterState2block.style.display = "flex";
-
-            if (
-              tempChart &&
-              tempChart.options.plugins.annotation.annotations.targetLine
-            ) {
-              tempChart.options.plugins.annotation.annotations.targetLine.yMin =
-                targetVal;
-              tempChart.options.plugins.annotation.annotations.targetLine.yMax =
-                targetVal;
-              tempChart.options.plugins.annotation.annotations.targetLine.display = true;
-              tempChart.update();
-            }
-          } else {
-            if (manualModeBlock) manualModeBlock.style.display = "flex";
-            if (autoModeBlock) autoModeBlock.style.display = "none";
-            if (heaterState2block) heaterState2block.style.display = "none";
-
-            if (
-              tempChart &&
-              tempChart.options.plugins.annotation.annotations.targetLine
-            ) {
-              tempChart.options.plugins.annotation.annotations.targetLine.display = false;
-              tempChart.update();
-            }
-          }
-        });
-    });
-
-  fetch("/getheaterstate")
-    .then((res) => res.text())
-    .then((state) => {
-      document.getElementById("heaterButtonDemo").textContent = state.trim();
-      document.getElementById("heaterButtonDemo2").textContent = state.trim();
-      document.getElementById("heaterButton").value =
-        state.trim() === "ON" ? "Turn OFF" : "Turn ON";
-    });
-  fetch("/getautomode")
-    .then((res) => res.text())
-    .then((state) => {
-      const mode = state.trim();
-      document.getElementById("autoModeButtonDemo").textContent = mode;
-      document.getElementById("autoModeButton").value =
-        mode === "ON" ? "Turn OFF" : "Turn ON";
-
-      // Показ/приховування блоків
-      const autoModeBlock = document.getElementById("autoMode");
-      const manualModeBlock = document.getElementById("manualMode");
-      const heaterState2block = document.getElementById("heaterState2");
-
-      if (mode === "ON") {
-        if (manualModeBlock) manualModeBlock.style.display = "none";
-        if (autoModeBlock) autoModeBlock.style.display = "flex";
-        if (heaterState2block) heaterState2block.style.display = "flex";
-      } else if (mode === "OFF") {
-        if (manualModeBlock) manualModeBlock.style.display = "flex";
-        if (autoModeBlock) autoModeBlock.style.display = "none";
-        if (heaterState2block) heaterState2block.style.display = "none";
-      }
-    });
+function submitTargetValue(value) {
+  controlsRef.update({ targetValue: value });
+}
+function autoModeButtonFunction() {
+  const currentMode = document.getElementById("autoModeButtonDemo").textContent;
+  controlsRef.update({ autoMode: currentMode === "ON" ? "OFF" : "ON" });
+}
+function heaterButtonFunction() {
+  const isAutoMode =
+    document.getElementById("autoModeButtonDemo").textContent === "ON";
+  if (!isAutoMode) {
+    const currentState =
+      document.getElementById("heaterButtonDemo").textContent;
+    controlsRef.update({ heaterState: currentState === "ON" ? "OFF" : "ON" });
+  }
 }
 
-function heaterButtonFunction(value) {
-  fetch(`/postHeaterButton/?value=${value === "Turn ON" ? "ON" : "OFF"}`);
-}
-
-function autoModeButtonFunction(value) {
-  fetch(`/postAutoModeButton/?value=${value === "Turn ON" ? "ON" : "OFF"}`);
-}
-
-function initChart() {
-  const ctx = document.getElementById("tempChart").getContext("2d");
-  tempChart = new Chart(ctx, {
+function initChart(chartId, label, color) {
+  const ctx = document.getElementById(chartId).getContext("2d");
+  return new Chart(ctx, {
     type: "line",
     data: {
-      labels: Array.from(
-        { length: maxDataPoints },
-        (_, i) => `-${maxDataPoints - 1 - i}`
-      ),
+      labels: [],
       datasets: [
         {
-          label: "Temperature (°C)",
+          label: label,
           data: [],
-          borderColor: "#1b48c2",
-          backgroundColor: "rgba(75, 192, 192, 0.8)",
-          tension: 0,
+          borderColor: color,
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          tension: 0.1,
+          fill: true,
         },
       ],
     },
@@ -134,101 +60,121 @@ function initChart() {
       maintainAspectRatio: false,
       animation: false,
       scales: {
-        y: {
-          beginAtZero: false,
-        },
+        y: { beginAtZero: false, ticks: { color: "#e0e6f0" } },
+        x: { ticks: { color: "#e0e6f0" } },
       },
       plugins: {
-        annotation: {
-          annotations: {
-            targetLine: {
-              type: "line",
-              yMin: null, // will be updated dynamically
-              yMax: null,
-              borderColor: "red",
-              borderWidth: 2,
-              borderDash: [6, 6],
-              label: {
-                enabled: true,
-                content: "Target",
-                position: "start",
-                backgroundColor: "rgba(255, 99, 132, 0.8)",
-              },
-              display: false,
-            },
-          },
-        },
+        legend: { labels: { color: "#e0e6f0" } },
+        annotation: { annotations: { targetLine: { display: false } } },
       },
     },
   });
 }
 
-function initPressureChart() {
-  const ctx = document.getElementById("pressureChart").getContext("2d");
-  pressureChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: Array.from(
-        { length: maxDataPoints },
-        (_, i) => `-${maxDataPoints - 1 - i}`
-      ),
-      datasets: [
-        {
-          label: "Pressure (hPa)",
-          data: [],
-          borderColor: "#1b48c2",
-          backgroundColor: "rgba(75, 192, 192, 0.8)",
-          tension: 0,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: false,
-      scales: { y: { beginAtZero: false } },
-    },
-  });
-}
-
-function addTemperatureData(temp) {
-  temperatureValues.push(temp);
-  if (temperatureValues.length > maxDataPoints) temperatureValues.shift();
-  tempChart.data.datasets[0].data = [...temperatureValues];
-  tempChart.update();
-}
-
-function addPressureData(press) {
-  pressureValues.push(press);
-  if (pressureValues.length > maxDataPoints) pressureValues.shift();
-  pressureChart.data.datasets[0].data = [...pressureValues];
-  pressureChart.update();
-}
-
-async function fetchSensorData() {
-  try {
-    const res = await fetch("/data");
-    const json = await res.json();
-
-    temperatureValues.length = 0;
-    pressureValues.length = 0;
-
-    temperatureValues.push(...json.temperature);
-    pressureValues.push(...json.pressure);
-
-    tempChart.data.datasets[0].data = [...temperatureValues];
-    pressureChart.data.datasets[0].data = [...pressureValues];
-    tempChart.update();
-    pressureChart.update();
-  } catch (err) {
-    console.error("Sensor data fetch error:", err);
+function addDataToChart(chart, label, data) {
+  if (!chart) return;
+  chart.data.labels.push(label);
+  chart.data.datasets[0].data.push(data);
+  if (chart.data.labels.length > maxDataPoints) {
+    chart.data.labels.shift();
+    chart.data.datasets[0].data.shift();
   }
+  chart.update();
 }
+
+currentDataRef.on("value", (snapshot) => {
+  const data = snapshot.val();
+  if (data && typeof data.temperature !== "undefined") {
+    document.getElementById(
+      "temperatureValue"
+    ).textContent = `${data.temperature.toFixed(2)} °C`;
+    document.getElementById(
+      "pressureValue"
+    ).textContent = `${data.pressure.toFixed(2)} hPa`;
+  }
+});
+
+controlsRef.on("value", (snapshot) => {
+  const controls = snapshot.val() || {};
+  const autoMode = controls.autoMode || "OFF";
+  const heaterState = controls.heaterState || "OFF";
+  const targetValue = parseFloat(controls.targetValue || "25");
+
+  document.getElementById("autoModeButtonDemo").textContent = autoMode;
+  document.getElementById("autoModeButton").value =
+    autoMode === "ON" ? "Turn OFF" : "Turn ON";
+  document.getElementById("heaterButtonDemo").textContent = heaterState;
+  document.getElementById("heaterButtonDemo2").textContent = heaterState;
+  document.getElementById("heaterButton").value =
+    heaterState === "ON" ? "Turn OFF" : "Turn ON";
+  document.getElementById("currentTargetValue").textContent = targetValue;
+  document.getElementById("newTargetValue").textContent = targetValue;
+  document.getElementById("mySlider").value = targetValue;
+
+  const autoModeBlock = document.getElementById("autoMode");
+  const manualModeBlock = document.getElementById("manualMode");
+  const heaterState2block = document.getElementById("heaterState2");
+
+  if (autoMode === "ON") {
+    manualModeBlock.style.display = "none";
+    autoModeBlock.style.display = "flex";
+    heaterState2block.style.display = "flex";
+    if (tempChart) {
+      tempChart.options.plugins.annotation.annotations.targetLine = {
+        type: "line",
+        yMin: targetValue,
+        yMax: targetValue,
+        borderColor: "red",
+        borderWidth: 2,
+        display: true,
+        label: { content: "Target", enabled: true, position: "start" },
+      };
+      tempChart.update();
+    }
+  } else {
+    manualModeBlock.style.display = "flex";
+    autoModeBlock.style.display = "none";
+    heaterState2block.style.display = "none";
+    if (
+      tempChart &&
+      tempChart.options.plugins.annotation.annotations.targetLine
+    ) {
+      tempChart.options.plugins.annotation.annotations.targetLine.display = false;
+      tempChart.update();
+    }
+  }
+});
 
 window.onload = function () {
-  checkForValueUpdate();
-  initChart();
-  initPressureChart();
-  setInterval(fetchSensorData, 1000);
-  setInterval(checkForValueUpdate, 1000);
+  console.log("Window loaded. Initializing charts...");
+  tempChart = initChart("tempChart", "Temperature (°C)", "#1f4eff");
+  pressureChart = initChart("pressureChart", "Pressure (hPa)", "#17c0eb");
+
+  console.log("Fetching initial history...");
+  historyRef.limitToLast(maxDataPoints).once("value", (snapshot) => {
+    console.log("Initial history received:", snapshot.val());
+    snapshot.forEach((childSnapshot) => {
+      const data = childSnapshot.val();
+      if (data && data.timestamp) {
+        const time = new Date(data.timestamp).toLocaleTimeString();
+        addDataToChart(tempChart, time, data.temperature);
+        addDataToChart(pressureChart, time, data.pressure);
+      }
+    });
+
+    console.log("Setting up listener for new data...");
+    historyRef.limitToLast(1).on("child_added", (snapshot) => {
+      const data = snapshot.val();
+      console.log("New child added:", data);
+      if (data && data.timestamp) {
+        const lastLabel =
+          tempChart.data.labels[tempChart.data.labels.length - 1];
+        const newTime = new Date(data.timestamp).toLocaleTimeString();
+        if (lastLabel !== newTime) {
+          addDataToChart(tempChart, newTime, data.temperature);
+          addDataToChart(pressureChart, newTime, data.pressure);
+        }
+      }
+    });
+  });
 };
